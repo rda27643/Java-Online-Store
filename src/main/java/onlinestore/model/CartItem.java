@@ -1,7 +1,7 @@
 package onlinestore.model;
 
 public class CartItem {
-    private Product product;
+    private final Product product;
     private int quantity;
 
     public CartItem(int quantity, Product product) {
