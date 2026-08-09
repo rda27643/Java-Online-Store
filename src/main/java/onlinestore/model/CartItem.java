@@ -4,17 +4,23 @@ public class CartItem {
     private final Product product;
     private int quantity;
 
-    public CartItem(int quantity, Product product) {
+    public CartItem(Product product, int quantity) {
         this.quantity = quantity;
         this.product = product;
     }
 
     public void setQuantity(int quantity) {
-        this.quantity = quantity;
+        if (quantity < 0){
+            throw new IllegalArgumentException("must be positive");
+        } else
+            this.quantity = quantity;
     }
 
     public void increaseQuantity(int increase) {
-        this.quantity += increase;
+        if (quantity < 0){
+            throw new IllegalArgumentException("must be positive");
+        } else
+            this.quantity += quantity;
     }
 
     public Product getProduct() {
@@ -25,7 +31,7 @@ public class CartItem {
         return quantity;
     }
 
-    public double getTotalPrice(){
+    public double getTotalPrice() {
         return product.getPrice() * this.quantity;
     }
 }

@@ -22,7 +22,8 @@ public class OrderItem {
     public double getPrice() {
         return price;
     }
-    public double getTotalPrice(){
-        return product.getPrice() * quantity;
+
+    public double getTotalPrice() {
+        return price * quantity;
     }
 }

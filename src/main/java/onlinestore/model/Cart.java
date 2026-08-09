@@ -28,24 +28,27 @@ public class Cart {
         }
         return false;
     }
-    public void clear(){
+
+    public void clear() {
         items.clear();
     }
-    public boolean isEmpty(){
+
+    public boolean isEmpty() {
         return items.isEmpty();
     }
 
-    public double getTotalPrice(){
-        double sumPrice =0;
+    public double getTotalPrice() {
+        double sumPrice = 0;
         for (CartItem item : items) {
-            sumPrice +=item.getTotalPrice();
+            sumPrice += item.getTotalPrice();
         }
         return sumPrice;
     }
-    public int getItemCount(){
-        int sumCount =0;
+
+    public int getItemCount() {
+        int sumCount = 0;
         for (CartItem item : items) {
-            sumCount+=item.getQuantity();
+            sumCount += item.getQuantity();
         }
         return sumCount;
     }
