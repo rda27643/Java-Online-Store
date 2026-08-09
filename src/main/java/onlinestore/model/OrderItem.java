@@ -1,9 +1,9 @@
 package onlinestore.model;
 
 public class OrderItem {
-    private Product product;
-    private int quantity;
-    private double price;
+    private final Product product;
+    private final int quantity;
+    private final double price;
 
     public OrderItem(Product product, int quantity, double price) {
         this.product = product;
