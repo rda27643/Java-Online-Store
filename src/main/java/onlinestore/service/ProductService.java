@@ -3,7 +3,9 @@ package onlinestore.service;
 import onlinestore.exception.ProductNotFoundException;
 import onlinestore.model.Product;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ProductService {
@@ -25,5 +27,12 @@ public class ProductService {
             throw new ProductNotFoundException("Product not found");
         } else
             return products.get(productId);
+    }
+    public List<Product> getAllProducts(){
+        List<Product> productList = new ArrayList<>();
+        for (Map.Entry<Integer, Product> productEntry : products.entrySet()) {
+            productList.add(productEntry.getValue());
+        }
+        return productList;
     }
 }
