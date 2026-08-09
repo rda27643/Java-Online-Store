@@ -20,4 +20,10 @@ public class ProductService {
             throw new ProductNotFoundException("Product not found");
         }
     }
+    public Product findProductById(int productId){
+        if (products.get(productId) == null){
+            throw new ProductNotFoundException("Product not found");
+        } else
+            return products.get(productId);
+    }
 }
