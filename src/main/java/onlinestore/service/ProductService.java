@@ -35,4 +35,14 @@ public class ProductService {
         }
         return productList;
     }
+
+    public void increaseStock(int productId, int amount){
+        if (amount <= 0){
+            throw new IllegalArgumentException("amount must be greater than 0");
+        }else if (products.get(productId) == null){
+            throw new ProductNotFoundException("Product not found");
+        } else
+            products.get(productId).increaseStock(amount);
+
+    }
 }
