@@ -27,7 +27,9 @@ public class ProductService {
     }
 
     public Product findProductById(int productId) {
-        if (products.get(productId) == null) {
+        if (productId <= 0){
+            throw new IllegalArgumentException("Id must greater than 0");
+        }else if (products.get(productId) == null) {
             throw new ProductNotFoundException("Product not found");
         } else
             return products.get(productId);
