@@ -1,6 +1,7 @@
 package onlinestore.service;
 
 import onlinestore.exception.InsufficientStockException;
+import onlinestore.exception.InvalidProductIDException;
 import onlinestore.exception.ProductNotFoundException;
 import onlinestore.model.Product;
 
@@ -27,7 +28,9 @@ public class ProductService {
     }
 
     public Product findProductById(int productId) {
-        if (products.get(productId) == null) {
+        if (productId <= 0) {
+            throw new InvalidProductIDException("Invalid product ID");
+        } else if (products.get(productId) == null) {
             throw new ProductNotFoundException("Product not found");
         } else
             return products.get(productId);
@@ -49,13 +52,14 @@ public class ProductService {
         } else
             products.get(productId).increaseStock(amount);
     }
+
     public void decreaseStock(int productId, int amount) {
         if (amount <= 0) {
             throw new IllegalArgumentException("amount must be greater than 0");
         } else if (products.get(productId) == null) {
             throw new ProductNotFoundException("Product not found");
-        } else{
-            if (!products.get(productId).decreaseStock(amount)){
+        } else {
+            if (!products.get(productId).decreaseStock(amount)) {
                 throw new InsufficientStockException("Insufficient stock");
             }
         }
