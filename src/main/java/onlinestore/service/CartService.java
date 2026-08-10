@@ -1,6 +1,7 @@
 package onlinestore.service;
 
 import onlinestore.exception.InvalidQuantityException;
+import onlinestore.exception.ProductNotFoundException;
 import onlinestore.model.Cart;
 import onlinestore.model.CartItem;
 import onlinestore.model.Product;
@@ -27,5 +28,14 @@ public class CartService {
         }
         CartItem cartItem = new CartItem(product, quantity);
         cart.addItem(cartItem);
+    }
+    public void removeProductFromCart(int productId){
+        for (CartItem item : cart.getItems()) {
+            if (item.getProduct().getId() == productId){
+                cart.removeItem(productId);
+                return;
+            }
+        }
+        throw new ProductNotFoundException("Product not in cart");
     }
 }
