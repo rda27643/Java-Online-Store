@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ProductService {
-    private Map<Integer, Product> products;
+    private final Map<Integer, Product> products;
 
     public ProductService() {
         this.products = new HashMap<>();
