@@ -1,5 +1,7 @@
 package onlinestore.model;
 
+import onlinestore.exception.InvalidQuantityException;
+
 public class CartItem {
     private final Product product;
     private int quantity;
@@ -11,14 +13,14 @@ public class CartItem {
 
     public void setQuantity(int quantity) {
         if (quantity < 0){
-            throw new IllegalArgumentException("must be positive");
+            throw new InvalidQuantityException("must be positive");
         } else
             this.quantity = quantity;
     }
 
     public void increaseQuantity(int increase) {
         if (quantity < 0){
-            throw new IllegalArgumentException("must be positive");
+            throw new InvalidQuantityException("must be positive");
         } else
             this.quantity += quantity;
     }
