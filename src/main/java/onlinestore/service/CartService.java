@@ -67,4 +67,8 @@ public class CartService {
     public Cart getCart() {
         return cart;
     }
+
+    public void clearCart(){
+        this.cart.clear();
+    }
 }
