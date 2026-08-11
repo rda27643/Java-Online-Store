@@ -43,5 +43,12 @@ public class OrderService {
         } else
             return orders.get(orderId);
     }
+    public List<Order> getAllOrder(){
+        List<Order> orderList = new ArrayList<>();
+        for (Map.Entry<Integer, Order> orderEntry : orders.entrySet()) {
+            orderList.add(orderEntry.getValue());
+        }
+        return orderList;
+    }
 
 }
