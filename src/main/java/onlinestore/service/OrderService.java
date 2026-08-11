@@ -1,6 +1,7 @@
 package onlinestore.service;
 
 import onlinestore.exception.EmptyCartException;
+import onlinestore.exception.OrderNotFoundException;
 import onlinestore.model.Cart;
 import onlinestore.model.CartItem;
 import onlinestore.model.Order;
@@ -33,7 +34,14 @@ public class OrderService {
             }
             cart.clear();
             Order order = new Order(orderItems);
+            orders.put(order.getId(), order);
         }
+    }
+    public Order getOrderById(int orderId){
+        if (orders.get(orderId) == null){
+            throw new OrderNotFoundException("Order not found");
+        } else
+            return orders.get(orderId);
     }
 
 }
