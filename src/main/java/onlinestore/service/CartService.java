@@ -29,8 +29,8 @@ public class CartService {
             throw new InsufficientStockException("Insufficient stock");
         }
         for (CartItem item : cart.getItems()) {
-            if (item.getProduct().getId() == productID ) {
-                if ((item.getQuantity() + quantity) > item.getProduct().getStock()){
+            if (item.getProduct().getId() == productID) {
+                if ((item.getQuantity() + quantity) > item.getProduct().getStock()) {
                     throw new InsufficientStockException("Insufficient stock");
                 } else {
                     item.increaseQuantity(quantity);
@@ -55,12 +55,16 @@ public class CartService {
     public void updateQuantity(int productId, int quantity) {
         for (CartItem item : cart.getItems()) {
             if (item.getProduct().getId() == productId) {
-                if (item.getProduct().getStock() < quantity){
+                if (item.getProduct().getStock() < quantity) {
                     throw new InsufficientStockException("Insufficient stock");
                 } else {
                     item.setQuantity(quantity);
                 }
             }
         }
+    }
+
+    public Cart getCart() {
+        return cart;
     }
 }
