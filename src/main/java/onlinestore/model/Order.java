@@ -11,6 +11,7 @@ public class Order {
     public Order(List<OrderItem> items) {
         this.id = nextID++;
         this.items = items;
+        status = OrderStatus.PENDING;
     }
 
     public void setStatus(OrderStatus status) {
