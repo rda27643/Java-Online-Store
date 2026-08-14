@@ -15,7 +15,7 @@ public class Cart {
     }
 
     public List<CartItem> getItems() {
-        return items;
+        return new ArrayList<>(items);
     }
 
     public boolean removeItem(int productId) {

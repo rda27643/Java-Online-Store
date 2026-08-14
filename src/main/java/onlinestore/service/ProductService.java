@@ -4,6 +4,7 @@ import onlinestore.exception.InsufficientStockException;
 import onlinestore.exception.InvalidProductIDException;
 import onlinestore.exception.ProductNotFoundException;
 import onlinestore.model.Product;
+import onlinestore.util.InputUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,46 +23,50 @@ public class ProductService {
     }
 
     public void removeProduct(int productId) {
+        InputUtils.validateProductID(productId);
         if (products.remove(productId) == null) {
             throw new ProductNotFoundException("Product not found");
         }
     }
 
     public Product findProductById(int productId) {
-        if (productId <= 0) {
-            throw new InvalidProductIDException("Invalid product ID");
-        } else if (products.get(productId) == null) {
+        InputUtils.validateProductID(productId);
+        Product product = products.get(productId);
+        if (product == null) {
             throw new ProductNotFoundException("Product not found");
-        } else
-            return products.get(productId);
+        }
+        return product;
+
     }
 
     public List<Product> getAllProducts() {
-        List<Product> productList = new ArrayList<>();
-        for (Map.Entry<Integer, Product> productEntry : products.entrySet()) {
-            productList.add(productEntry.getValue());
-        }
-        return productList;
+        return new ArrayList<>(products.values());
     }
 
     public void increaseStock(int productId, int amount) {
+        InputUtils.validateProductID(productId);
         if (amount <= 0) {
             throw new IllegalArgumentException("amount must be greater than 0");
-        } else if (products.get(productId) == null) {
+        }
+        Product product = products.get(productId);
+        if (product == null) {
             throw new ProductNotFoundException("Product not found");
-        } else
-            products.get(productId).increaseStock(amount);
+        }
+        product.increaseStock(amount);
     }
 
     public void decreaseStock(int productId, int amount) {
+        InputUtils.validateProductID(productId);
         if (amount <= 0) {
             throw new IllegalArgumentException("amount must be greater than 0");
-        } else if (products.get(productId) == null) {
-            throw new ProductNotFoundException("Product not found");
-        } else {
-            if (!products.get(productId).decreaseStock(amount)) {
-                throw new InsufficientStockException("Insufficient stock");
-            }
         }
+        Product product = products.get(productId);
+        if (product == null) {
+            throw new ProductNotFoundException("Product not found");
+        }
+        if (!product.decreaseStock(amount)) {
+            throw new InsufficientStockException("Insufficient stock");
+        }
+
     }
 }

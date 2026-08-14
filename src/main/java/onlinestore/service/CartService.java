@@ -1,12 +1,10 @@
 package onlinestore.service;
 
-import onlinestore.exception.InsufficientStockException;
-import onlinestore.exception.InvalidProductIDException;
-import onlinestore.exception.InvalidQuantityException;
-import onlinestore.exception.ProductNotFoundException;
+import onlinestore.exception.*;
 import onlinestore.model.Cart;
 import onlinestore.model.CartItem;
 import onlinestore.model.Product;
+import onlinestore.util.InputUtils;
 
 public class CartService {
     private final Cart cart;
@@ -18,13 +16,8 @@ public class CartService {
     }
 
     public void addProductToCart(int productID, int quantity) {
-        if (quantity <= 0) {
-            throw new InvalidQuantityException("Quantity must greater than 0");
-        }
-        if (productID <= 0) {
-            throw new InvalidProductIDException("Invalid Id");
-        }
         Product product = productService.findProductById(productID);
+        InputUtils.validateQuantity(quantity);
         if (product.getStock() < quantity) {
             throw new InsufficientStockException("Insufficient stock");
         }
@@ -43,32 +36,37 @@ public class CartService {
     }
 
     public void removeProductFromCart(int productId) {
+        InputUtils.validateProductID(productId);
         for (CartItem item : cart.getItems()) {
             if (item.getProduct().getId() == productId) {
                 cart.removeItem(productId);
                 return;
             }
         }
-        throw new ProductNotFoundException("Product not in cart");
+        throw new ProductNotInCart("Product not in cart");
     }
 
     public void updateQuantity(int productId, int quantity) {
+        InputUtils.validateProductID(productId);
+        InputUtils.validateQuantity(quantity);
         for (CartItem item : cart.getItems()) {
             if (item.getProduct().getId() == productId) {
                 if (item.getProduct().getStock() < quantity) {
                     throw new InsufficientStockException("Insufficient stock");
                 } else {
                     item.setQuantity(quantity);
+                    return;
                 }
             }
         }
+        throw new ProductNotInCart("Product not in cart");
     }
 
     public Cart getCart() {
         return cart;
     }
 
-    public void clearCart(){
+    public void clearCart() {
         this.cart.clear();
     }
 }

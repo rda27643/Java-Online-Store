@@ -14,25 +14,26 @@ public class OrderService {
     private final Cart cart;
     private final ProductService productService;
 
-    public OrderService() {
-        orders = new HashMap<>();
-        cart = new Cart();
-        productService = new ProductService();
+    public OrderService(Cart cart, ProductService productService) {
+        this.orders = new HashMap<>();
+        this.cart = cart;
+        this.productService = productService;
     }
 
-    public void createOrder() {
+    public Order createOrder() {
         if (this.cart.isEmpty()) {
             throw new EmptyCartException("Cart is empty");
-        } else {
-            List<OrderItem> orderItems = new ArrayList<>();
-            for (CartItem item : cart.getItems()) {
-                orderItems.add(new OrderItem(item.getProduct(), item.getQuantity(), item.getProduct().getPrice()));
-                productService.decreaseStock(item.getProduct().getId(), item.getQuantity());
-            }
-            cart.clear();
-            Order order = new Order(orderItems);
-            orders.put(order.getId(), order);
         }
+        List<OrderItem> orderItems = new ArrayList<>();
+        for (CartItem item : cart.getItems()) {
+            orderItems.add(new OrderItem(item.getProduct(), item.getQuantity(), item.getProduct().getPrice()));
+            productService.decreaseStock(item.getProduct().getId(), item.getQuantity());
+        }
+        cart.clear();
+        Order order = new Order(orderItems);
+        orders.put(order.getId(), order);
+        return order;
+
     }
 
     public Order getOrderById(int orderId) {
@@ -42,7 +43,7 @@ public class OrderService {
             return orders.get(orderId);
     }
 
-    public List<Order> getAllOrder() {
+    public List<Order> getAllOrders() {
         List<Order> orderList = new ArrayList<>();
         for (Map.Entry<Integer, Order> orderEntry : orders.entrySet()) {
             orderList.add(orderEntry.getValue());
@@ -51,32 +52,30 @@ public class OrderService {
     }
 
     public void changeOrderStatus(int orderId, OrderStatus orderStatus) {
-        if (orders.get(orderId) == null) {
-            throw new OrderNotFoundException("Order not found");
-        } else {
-            switch (orders.get(orderId).getStatus()) {
-                case OrderStatus.PENDING -> {
-                    if (orderStatus == OrderStatus.PENDING) {
-                        throw new IllegalArgumentException("Order status can not change");
-                    } else {
-                        orders.get(orderId).setStatus(orderStatus);
-                    }
-                }
-                case OrderStatus.CONFIRMED -> {
-                    if (orderStatus == OrderStatus.PENDING || orderStatus == OrderStatus.CONFIRMED) {
-                        throw new IllegalArgumentException("Order status can not change");
-                    } else {
-                        orders.get(orderId).setStatus(orderStatus);
-                    }
-                }
-                case OrderStatus.CANCELLED, OrderStatus.COMPLETED -> {
+        Order order = getOrderById(orderId);
+        switch (order.getStatus()) {
+            case OrderStatus.PENDING -> {
+                if ((orderStatus == OrderStatus.CONFIRMED) || (orderStatus == OrderStatus.CANCELLED)) {
+                    order.setStatus(orderStatus);
+                } else {
                     throw new IllegalArgumentException("Order status can not change");
                 }
-                default -> {
-                    throw new IllegalArgumentException("Invalid order status");
+            }
+            case OrderStatus.CONFIRMED -> {
+                if ((orderStatus == OrderStatus.CANCELLED) || (orderStatus == OrderStatus.COMPLETED)) {
+                    order.setStatus(orderStatus);
+                } else {
+                    throw new IllegalArgumentException("Order status can not change");
                 }
             }
+            case OrderStatus.CANCELLED, OrderStatus.COMPLETED -> {
+                throw new IllegalArgumentException("Order status can not change");
+            }
+            default -> {
+                throw new IllegalArgumentException("Invalid order status");
+            }
         }
+
     }
 
 }
