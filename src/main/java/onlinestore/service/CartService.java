@@ -4,7 +4,7 @@ import onlinestore.exception.*;
 import onlinestore.model.Cart;
 import onlinestore.model.CartItem;
 import onlinestore.model.Product;
-import onlinestore.util.validationUtils;
+import onlinestore.util.ValidationUtils;
 
 import java.util.List;
 
@@ -13,48 +13,53 @@ public class CartService {
     private final ProductService productService;
 
     public CartService(Cart cart, ProductService productService) {
+        if (cart == null) {
+            throw new IllegalArgumentException("Cart can not be null");
+        }
+        if (productService == null) {
+            throw new IllegalArgumentException("Product service can not be null");
+        }
         this.cart = cart;
         this.productService = productService;
     }
 
     public void addProductToCart(int productID, int quantity) {
+        ValidationUtils.validateQuantity(quantity);
         Product product = productService.findProductById(productID);
-        validationUtils.validateQuantity(quantity);
         if (product.getStock() < quantity) {
             throw new InsufficientStockException("Insufficient stock");
         }
         for (CartItem item : cart.getItems()) {
             if (item.getProduct().getId() == productID) {
-                if ((item.getQuantity() + quantity) > item.getProduct().getStock()) {
+                if ((item.getQuantity() + quantity) > product.getStock()) {
                     throw new InsufficientStockException("Insufficient stock");
-                } else {
-                    item.increaseQuantity(quantity);
-                    return;
                 }
+                item.increaseQuantity(quantity);
+                return;
+
             }
         }
-        CartItem cartItem = new CartItem(product, quantity);
-        cart.addItem(cartItem);
+        cart.addItem(new CartItem(product, quantity));
     }
 
     public void removeProductFromCart(int productId) {
-        validationUtils.validateProductID(productId);
+        ValidationUtils.validateProductID(productId);
         if (!cart.removeItem(productId)) {
             throw new ProductNotInCart("Product not in cart");
         }
     }
 
     public void updateQuantity(int productId, int quantity) {
-        validationUtils.validateProductID(productId);
-        validationUtils.validateQuantity(quantity);
+        ValidationUtils.validateProductID(productId);
+        ValidationUtils.validateQuantity(quantity);
         for (CartItem item : cart.getItems()) {
             if (item.getProduct().getId() == productId) {
                 if (item.getProduct().getStock() < quantity) {
                     throw new InsufficientStockException("Insufficient stock");
-                } else {
-                    item.setQuantity(quantity);
-                    return;
                 }
+                item.setQuantity(quantity);
+                return;
+
             }
         }
         throw new ProductNotInCart("Product not in cart");

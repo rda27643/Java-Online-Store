@@ -4,7 +4,7 @@ import onlinestore.exception.InsufficientStockException;
 import onlinestore.exception.InvalidAmountStockException;
 import onlinestore.exception.ProductNotFoundException;
 import onlinestore.model.Product;
-import onlinestore.util.validationUtils;
+import onlinestore.util.ValidationUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +19,7 @@ public class ProductService {
     }
 
     public void addProduct(Product product) {
-        validationUtils.validateProductNotNull(product);
+        ValidationUtils.validateProductNotNull(product);
         if (products.containsKey(product.getId())){
             throw new IllegalArgumentException("Product already exist");
         }
@@ -27,7 +27,7 @@ public class ProductService {
     }
 
     public void removeProduct(int productId) {
-        validationUtils.validateProductID(productId);
+        ValidationUtils.validateProductID(productId);
         if (products.remove(productId) == null) {
             throw new ProductNotFoundException("Product not found");
         }
@@ -35,7 +35,7 @@ public class ProductService {
     }
 
     public Product findProductById(int productId) {
-        validationUtils.validateProductID(productId);
+        ValidationUtils.validateProductID(productId);
         Product product = products.get(productId);
         if (product == null) {
             throw new ProductNotFoundException("Product not found");
@@ -48,7 +48,7 @@ public class ProductService {
     }
 
     public void increaseStock(int productId, int amount) {
-        validationUtils.validateProductID(productId);
+        ValidationUtils.validateProductID(productId);
         if (amount <= 0) {
             throw new IllegalArgumentException("Amount must be greater than 0");
         }
@@ -57,7 +57,7 @@ public class ProductService {
     }
 
     public void decreaseStock(int productId, int amount) {
-        validationUtils.validateProductID(productId);
+        ValidationUtils.validateProductID(productId);
         if (amount <= 0) {
             throw new InvalidAmountStockException("Amount must be greater than 0");
         }
