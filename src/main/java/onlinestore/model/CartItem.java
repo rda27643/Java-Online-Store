@@ -1,20 +1,19 @@
 package onlinestore.model;
 
 import onlinestore.exception.InvalidQuantityException;
-import onlinestore.util.InputUtils;
 
 public class CartItem {
     private final Product product;
     private int quantity;
 
     public CartItem(Product product, int quantity) {
-        InputUtils.validateQuantity(quantity);
+        validateQuantity(quantity);
         this.quantity = quantity;
         this.product = product;
     }
 
     public void setQuantity(int quantity) {
-        InputUtils.validateQuantity(quantity);
+        validateQuantity(quantity);
         this.quantity = quantity;
     }
 
@@ -35,6 +34,12 @@ public class CartItem {
 
     public double getTotalPrice() {
         return product.getPrice() * this.quantity;
+    }
+
+    public void validateQuantity(int quantity){
+        if (quantity <= 0) {
+            throw new InvalidQuantityException("Quantity must greater than 0");
+        }
     }
 
 

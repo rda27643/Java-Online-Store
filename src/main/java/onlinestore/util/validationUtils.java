@@ -4,7 +4,7 @@ import onlinestore.exception.InvalidProductIDException;
 import onlinestore.exception.InvalidQuantityException;
 import onlinestore.model.Product;
 
-public class InputUtils {
+public class validationUtils {
 
     public static void validateProductID(int id) {
         if (id <= 0) {

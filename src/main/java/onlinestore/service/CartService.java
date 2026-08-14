@@ -4,7 +4,7 @@ import onlinestore.exception.*;
 import onlinestore.model.Cart;
 import onlinestore.model.CartItem;
 import onlinestore.model.Product;
-import onlinestore.util.InputUtils;
+import onlinestore.util.validationUtils;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class CartService {
 
     public void addProductToCart(int productID, int quantity) {
         Product product = productService.findProductById(productID);
-        InputUtils.validateQuantity(quantity);
+        validationUtils.validateQuantity(quantity);
         if (product.getStock() < quantity) {
             throw new InsufficientStockException("Insufficient stock");
         }
@@ -38,15 +38,15 @@ public class CartService {
     }
 
     public void removeProductFromCart(int productId) {
-        InputUtils.validateProductID(productId);
+        validationUtils.validateProductID(productId);
         if (!cart.removeItem(productId)) {
             throw new ProductNotInCart("Product not in cart");
         }
     }
 
     public void updateQuantity(int productId, int quantity) {
-        InputUtils.validateProductID(productId);
-        InputUtils.validateQuantity(quantity);
+        validationUtils.validateProductID(productId);
+        validationUtils.validateQuantity(quantity);
         for (CartItem item : cart.getItems()) {
             if (item.getProduct().getId() == productId) {
                 if (item.getProduct().getStock() < quantity) {

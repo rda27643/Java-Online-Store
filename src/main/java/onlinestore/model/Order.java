@@ -10,8 +10,11 @@ public class Order {
     private static int nextID = 1000;
 
     public Order(List<OrderItem> items) {
+        if (items == null){
+            throw new IllegalArgumentException("Invalid order items");
+        }
         this.id = nextID++;
-        this.items = items;
+        this.items = new ArrayList<>(items);
         status = OrderStatus.PENDING;
     }
 
