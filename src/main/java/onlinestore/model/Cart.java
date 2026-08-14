@@ -11,6 +11,9 @@ public class Cart {
     }
 
     public void addItem(CartItem cartItem) {
+        if (cartItem == null){
+            throw new IllegalArgumentException("Cart item can not be null");
+        }
         items.add(cartItem);
     }
 

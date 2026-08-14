@@ -20,9 +20,10 @@ public class ProductService {
 
     public void addProduct(Product product) {
         validationUtils.validateProductNotNull(product);
-        if (products.putIfAbsent(product.getId(), product) != null){
+        if (products.containsKey(product.getId())){
             throw new IllegalArgumentException("Product already exist");
         }
+        products.put(product.getId(), product);
     }
 
     public void removeProduct(int productId) {
@@ -49,24 +50,18 @@ public class ProductService {
     public void increaseStock(int productId, int amount) {
         validationUtils.validateProductID(productId);
         if (amount <= 0) {
-            throw new IllegalArgumentException("amount must be greater than 0");
+            throw new IllegalArgumentException("Amount must be greater than 0");
         }
-        Product product = products.get(productId);
-        if (product == null) {
-            throw new ProductNotFoundException("Product not found");
-        }
+        Product product = findProductById(productId);
         product.increaseStock(amount);
     }
 
     public void decreaseStock(int productId, int amount) {
         validationUtils.validateProductID(productId);
         if (amount <= 0) {
-            throw new InvalidAmountStockException("amount must be greater than 0");
+            throw new InvalidAmountStockException("Amount must be greater than 0");
         }
-        Product product = products.get(productId);
-        if (product == null) {
-            throw new ProductNotFoundException("Product not found");
-        }
+        Product product = findProductById(productId);
         if (!product.decreaseStock(amount)) {
             throw new InsufficientStockException("Insufficient stock");
         }

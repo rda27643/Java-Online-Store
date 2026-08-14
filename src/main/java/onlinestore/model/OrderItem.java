@@ -8,6 +8,9 @@ public class OrderItem {
     private final double price;
 
     public OrderItem(Product product, int quantity, double price) {
+        if (product == null){
+            throw new IllegalArgumentException("Product can not be null");
+        }
         validateQuantity(quantity);
         validatePrice(price);
         this.product = product;

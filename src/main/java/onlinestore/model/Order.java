@@ -10,8 +10,8 @@ public class Order {
     private static int nextID = 1000;
 
     public Order(List<OrderItem> items) {
-        if (items == null){
-            throw new IllegalArgumentException("Invalid order items");
+        if (items == null || items.isEmpty()){
+            throw new IllegalArgumentException("Order must contain at least one item");
         }
         this.id = nextID++;
         this.items = new ArrayList<>(items);
@@ -19,6 +19,9 @@ public class Order {
     }
 
     public void setStatus(OrderStatus status) {
+        if (status == null){
+            throw new IllegalArgumentException("Order status can not be null");
+        }
         this.status = status;
     }
 

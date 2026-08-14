@@ -7,6 +7,9 @@ public class CartItem {
     private int quantity;
 
     public CartItem(Product product, int quantity) {
+        if (product == null){
+            throw new IllegalArgumentException("Product can not be null");
+        }
         validateQuantity(quantity);
         this.quantity = quantity;
         this.product = product;
@@ -19,7 +22,7 @@ public class CartItem {
 
     public void increaseQuantity(int increase) {
         if (increase <= 0) {
-            throw new InvalidQuantityException("must be positive");
+            throw new InvalidQuantityException("Must be positive");
         } else
             this.quantity += increase;
     }
