@@ -1,9 +1,10 @@
 package onlinestore.service;
 
 import onlinestore.exception.InsufficientStockException;
-import onlinestore.exception.InvalidProductIDException;
+import onlinestore.exception.InvalidAmountStockException;
 import onlinestore.exception.ProductNotFoundException;
 import onlinestore.model.Product;
+import onlinestore.util.ValidationUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,50 +19,52 @@ public class ProductService {
     }
 
     public void addProduct(Product product) {
-        products.putIfAbsent(product.getId(), product);
+        ValidationUtils.validateProductNotNull(product);
+        if (products.containsKey(product.getId())){
+            throw new IllegalArgumentException("Product already exist");
+        }
+        products.put(product.getId(), product);
     }
 
     public void removeProduct(int productId) {
+        ValidationUtils.validateProductID(productId);
         if (products.remove(productId) == null) {
             throw new ProductNotFoundException("Product not found");
         }
+
     }
 
     public Product findProductById(int productId) {
-        if (productId <= 0) {
-            throw new InvalidProductIDException("Invalid product ID");
-        } else if (products.get(productId) == null) {
+        ValidationUtils.validateProductID(productId);
+        Product product = products.get(productId);
+        if (product == null) {
             throw new ProductNotFoundException("Product not found");
-        } else
-            return products.get(productId);
+        }
+        return product;
     }
 
     public List<Product> getAllProducts() {
-        List<Product> productList = new ArrayList<>();
-        for (Map.Entry<Integer, Product> productEntry : products.entrySet()) {
-            productList.add(productEntry.getValue());
-        }
-        return productList;
+        return new ArrayList<>(products.values());
     }
 
     public void increaseStock(int productId, int amount) {
+        ValidationUtils.validateProductID(productId);
         if (amount <= 0) {
-            throw new IllegalArgumentException("amount must be greater than 0");
-        } else if (products.get(productId) == null) {
-            throw new ProductNotFoundException("Product not found");
-        } else
-            products.get(productId).increaseStock(amount);
+            throw new IllegalArgumentException("Amount must be greater than 0");
+        }
+        Product product = findProductById(productId);
+        product.increaseStock(amount);
     }
 
     public void decreaseStock(int productId, int amount) {
+        ValidationUtils.validateProductID(productId);
         if (amount <= 0) {
-            throw new IllegalArgumentException("amount must be greater than 0");
-        } else if (products.get(productId) == null) {
-            throw new ProductNotFoundException("Product not found");
-        } else {
-            if (!products.get(productId).decreaseStock(amount)) {
-                throw new InsufficientStockException("Insufficient stock");
-            }
+            throw new InvalidAmountStockException("Amount must be greater than 0");
         }
+        Product product = findProductById(productId);
+        if (!product.decreaseStock(amount)) {
+            throw new InsufficientStockException("Insufficient stock");
+        }
+
     }
 }

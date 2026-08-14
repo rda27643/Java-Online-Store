@@ -11,11 +11,14 @@ public class Cart {
     }
 
     public void addItem(CartItem cartItem) {
+        if (cartItem == null){
+            throw new IllegalArgumentException("Cart item can not be null");
+        }
         items.add(cartItem);
     }
 
     public List<CartItem> getItems() {
-        return items;
+        return new ArrayList<>(items);
     }
 
     public boolean removeItem(int productId) {

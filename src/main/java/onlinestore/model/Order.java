@@ -1,5 +1,6 @@
 package onlinestore.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Order {
@@ -9,12 +10,18 @@ public class Order {
     private static int nextID = 1000;
 
     public Order(List<OrderItem> items) {
+        if (items == null || items.isEmpty()){
+            throw new IllegalArgumentException("Order must contain at least one item");
+        }
         this.id = nextID++;
-        this.items = items;
+        this.items = new ArrayList<>(items);
         status = OrderStatus.PENDING;
     }
 
     public void setStatus(OrderStatus status) {
+        if (status == null){
+            throw new IllegalArgumentException("Order status can not be null");
+        }
         this.status = status;
     }
 
@@ -27,7 +34,7 @@ public class Order {
     }
 
     public List<OrderItem> getItems() {
-        return items;
+        return new ArrayList<>(items);
     }
 
     public double getTotalPrice() {

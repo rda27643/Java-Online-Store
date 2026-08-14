@@ -17,21 +17,21 @@ public class Product {
 
     public void setName(String name) {
         if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("name can not be empty");
+            throw new IllegalArgumentException("Name can not be empty");
         } else
             this.name = name;
     }
 
     public void setPrice(double price) {
         if (price <= 0) {
-            throw new IllegalArgumentException("price must be greater than 0");
+            throw new IllegalArgumentException("Price must be greater than 0");
         } else
             this.price = price;
     }
 
     public void setStock(int stock) {
         if (stock < 0) {
-            throw new IllegalArgumentException("stock can not be less than 1");
+            throw new IllegalArgumentException("stock can not be negative");
         } else
             this.stock = stock;
     }
@@ -52,22 +52,22 @@ public class Product {
         return stock;
     }
 
-    public boolean increaseStock(int increase) {
-        if (increase < 0) {
+    public boolean increaseStock(int amount) {
+        if (amount <= 0) {
             return false;
-        } else {
-            this.stock += increase;
-            return true;
         }
+        this.stock += amount;
+        return true;
+
     }
 
-    public boolean decreaseStock(int decrease) {
-        if ((this.stock - decrease) < 0) {
+    public boolean decreaseStock(int amount) {
+        if (amount <= 0 || amount>stock) {
             return false;
-        } else {
-            this.stock -= decrease;
-            return true;
         }
+            this.stock -= amount;
+            return true;
+
     }
 
     @Override
