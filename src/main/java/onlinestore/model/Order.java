@@ -1,5 +1,6 @@
 package onlinestore.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Order {
@@ -27,7 +28,7 @@ public class Order {
     }
 
     public List<OrderItem> getItems() {
-        return items;
+        return new ArrayList<>(items);
     }
 
     public double getTotalPrice() {

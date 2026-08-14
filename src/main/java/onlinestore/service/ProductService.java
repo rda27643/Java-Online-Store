@@ -19,7 +19,10 @@ public class ProductService {
     }
 
     public void addProduct(Product product) {
-        products.putIfAbsent(product.getId(), product);
+        InputUtils.validateProductNotNull(product);
+        if (products.putIfAbsent(product.getId(), product) != null){
+            throw new IllegalArgumentException("Product already exist");
+        }
     }
 
     public void removeProduct(int productId) {
@@ -36,7 +39,6 @@ public class ProductService {
             throw new ProductNotFoundException("Product not found");
         }
         return product;
-
     }
 
     public List<Product> getAllProducts() {

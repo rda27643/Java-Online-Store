@@ -6,6 +6,8 @@ import onlinestore.model.CartItem;
 import onlinestore.model.Product;
 import onlinestore.util.InputUtils;
 
+import java.util.List;
+
 public class CartService {
     private final Cart cart;
     private final ProductService productService;
@@ -37,13 +39,9 @@ public class CartService {
 
     public void removeProductFromCart(int productId) {
         InputUtils.validateProductID(productId);
-        for (CartItem item : cart.getItems()) {
-            if (item.getProduct().getId() == productId) {
-                cart.removeItem(productId);
-                return;
-            }
+        if (!cart.removeItem(productId)) {
+            throw new ProductNotInCart("Product not in cart");
         }
-        throw new ProductNotInCart("Product not in cart");
     }
 
     public void updateQuantity(int productId, int quantity) {
@@ -63,7 +61,12 @@ public class CartService {
     }
 
     public Cart getCart() {
-        return cart;
+        List<CartItem> items = cart.getItems();
+        Cart cart_copy = new Cart();
+        for (CartItem item : items) {
+            cart_copy.addItem(item);
+        }
+        return cart_copy;
     }
 
     public void clearCart() {

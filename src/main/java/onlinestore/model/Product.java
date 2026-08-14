@@ -53,7 +53,7 @@ public class Product {
     }
 
     public boolean increaseStock(int increase) {
-        if (increase < 0) {
+        if (increase <= 0) {
             return false;
         } else {
             this.stock += increase;
@@ -62,6 +62,9 @@ public class Product {
     }
 
     public boolean decreaseStock(int decrease) {
+        if (decrease <=0){
+            throw new IllegalArgumentException("Invalid decrease number");
+        }
         if ((this.stock - decrease) < 0) {
             return false;
         } else {
