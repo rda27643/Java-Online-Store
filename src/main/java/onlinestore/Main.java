@@ -1,14 +1,13 @@
 package onlinestore;
 
 
-import onlinestore.exception.InsufficientStockException;
-import onlinestore.exception.InvalidProductIDException;
-import onlinestore.exception.InvalidQuantityException;
-import onlinestore.exception.ProductNotInCart;
+import onlinestore.exception.*;
 import onlinestore.model.Cart;
 import onlinestore.model.CartItem;
+import onlinestore.model.Order;
 import onlinestore.model.Product;
 import onlinestore.service.CartService;
+import onlinestore.service.OrderService;
 import onlinestore.service.ProductService;
 import onlinestore.util.ConsoleReader;
 
@@ -20,12 +19,14 @@ public class Main {
     private final Cart cart;
     private final CartService cartService;
     private final Scanner scanner;
+    private final OrderService orderService;
 
     private Main() {
         this.scanner = new Scanner(System.in);
         productService = new ProductService();
         cart = new Cart();
         cartService = new CartService(cart, productService);
+        orderService =new OrderService(cart, productService);
     }
 
     public static void main(String[] args) {
@@ -99,6 +100,10 @@ public class Main {
             }
             case 8 ->{
                 clearCart();
+                return true;
+            }
+            case 9 ->{
+                createOrder();
                 return true;
             }
 
@@ -199,6 +204,19 @@ public class Main {
     private void clearCart(){
         cartService.clearCart();
     }
+
+    private void createOrder(){
+        try {
+            Order order = orderService.createOrder();
+            System.out.println("Order ID= #" + order.getId() + " created");
+        } catch (EmptyCartException | InsufficientStockException | IllegalArgumentException |
+        InvalidQuantityException | InvalidAmountStockException | InvalidProductIDException e){
+            System.out.println(e.getMessage());
+        }
+
+
+    }
+
 
 
 }
