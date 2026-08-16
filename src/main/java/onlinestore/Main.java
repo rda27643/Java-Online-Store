@@ -2,10 +2,7 @@ package onlinestore;
 
 
 import onlinestore.exception.*;
-import onlinestore.model.Cart;
-import onlinestore.model.CartItem;
-import onlinestore.model.Order;
-import onlinestore.model.Product;
+import onlinestore.model.*;
 import onlinestore.service.CartService;
 import onlinestore.service.OrderService;
 import onlinestore.service.ProductService;
@@ -26,7 +23,7 @@ public class Main {
         productService = new ProductService();
         cart = new Cart();
         cartService = new CartService(cart, productService);
-        orderService =new OrderService(cart, productService);
+        orderService = new OrderService(cart, productService);
     }
 
     public static void main(String[] args) {
@@ -94,16 +91,20 @@ public class Main {
                 updateCartQuantity();
                 return true;
             }
-            case 7 ->{
+            case 7 -> {
                 showCart();
                 return true;
             }
-            case 8 ->{
+            case 8 -> {
                 clearCart();
                 return true;
             }
-            case 9 ->{
+            case 9 -> {
                 createOrder();
+                return true;
+            }
+            case 10 -> {
+                findOrder();
                 return true;
             }
 
@@ -119,6 +120,7 @@ public class Main {
         }
 
     }
+
 
     private void addProduct() {
         String name = ConsoleReader.readString("Enter name of product: ");
@@ -173,17 +175,17 @@ public class Main {
         }
     }
 
-    private void updateCartQuantity(){
+    private void updateCartQuantity() {
         int productId = ConsoleReader.readInt("Enter ID product: ");
         int quantity = ConsoleReader.readInt("Enter new quantity product: ");
         try {
-            cartService.updateQuantity(productId,quantity);
-        } catch (InvalidProductIDException | InvalidQuantityException | InsufficientStockException e){
+            cartService.updateQuantity(productId, quantity);
+        } catch (InvalidProductIDException | InvalidQuantityException | InsufficientStockException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    private void showCart(){
+    private void showCart() {
         Cart showCart = cartService.getCart();
         System.out.println("===========================");
         System.out.println("\t\tCart");
@@ -191,8 +193,8 @@ public class Main {
         System.out.println("ID\t\tProduct\t\tPrice\t\tQuantity\tTotal");
         System.out.println("-----------------------------------------------------");
         for (CartItem item : showCart.getItems()) {
-            System.out.printf("%d\t\t%s\t\t$%,.2f\t\t%d\t\t\t%,.2f",item.getProduct().getId(),item.getProduct().getName(), item.getProduct().getPrice()
-            ,item.getQuantity(),item.getTotalPrice());
+            System.out.printf("%d\t\t%s\t\t$%,.2f\t\t%d\t\t\t%,.2f", item.getProduct().getId(), item.getProduct().getName(), item.getProduct().getPrice()
+                    , item.getQuantity(), item.getTotalPrice());
             System.out.println();
         }
         System.out.println("-----------------------------------------------------");
@@ -201,22 +203,41 @@ public class Main {
         System.out.println("===========================");
     }
 
-    private void clearCart(){
+    private void clearCart() {
         cartService.clearCart();
     }
 
-    private void createOrder(){
+    private void createOrder() {
         try {
             Order order = orderService.createOrder();
             System.out.println("Order ID= #" + order.getId() + " created");
         } catch (EmptyCartException | InsufficientStockException | IllegalArgumentException |
-        InvalidQuantityException | InvalidAmountStockException | InvalidProductIDException e){
+                 InvalidQuantityException | InvalidAmountStockException | InvalidProductIDException e) {
             System.out.println(e.getMessage());
         }
 
 
     }
 
+    private void findOrder() {
+        int orderId = ConsoleReader.readInt("Enter order ID: ");
+        try {
+            Order order = orderService.getOrderById(orderId);
+            System.out.println("=====================");
+            System.out.println("\t\tOrder");
+            System.out.println("=====================");
+            System.out.println("Order ID: " + order.getId() + "\nStatus: " + order.getStatus());
+            System.out.println("Product\t\tPrice\t\tQuantity\ttotal");
+            for (OrderItem item : order.getItems()) {
+                System.out.printf("%s\t\t%,.2f\t\t%d\t\t%,.2f", item.getProduct().getName(), item.getPrice() , item.getQuantity() , item.getTotalPrice());
+            }
+            System.out.println("-----------------------------------");
+            System.out.println("Total: " + order.getTotalPrice());
+
+        } catch (OrderNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
 
 }
