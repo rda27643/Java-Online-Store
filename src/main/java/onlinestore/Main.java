@@ -2,6 +2,9 @@ package onlinestore;
 
 
 import onlinestore.exception.InsufficientStockException;
+import onlinestore.exception.InvalidProductIDException;
+import onlinestore.exception.InvalidQuantityException;
+import onlinestore.exception.ProductNotInCart;
 import onlinestore.model.Cart;
 import onlinestore.model.Product;
 import onlinestore.service.CartService;
@@ -73,7 +76,7 @@ public class Main {
                 showProducts();
                 return true;
             }
-            case 3 ->{
+            case 3 -> {
                 removeProduct();
                 return true;
             }
@@ -107,33 +110,43 @@ public class Main {
         }
     }
 
-    private void showProducts(){
+    private void showProducts() {
         int counter = 1;
         List<Product> products = productService.getAllProducts();
-        if (products.isEmpty()){
+        if (products.isEmpty()) {
             System.out.println("Not products found");
         }
         for (Product product : productService.getAllProducts()) {
-            System.out.printf("%d- Product {\nid = #%d\nname = %s\nprice = $%,f\nstock = %d\n}\n",counter++,product.getId(),product
-                    .getName(),product.getPrice() , product.getStock());
+            System.out.printf("%d- Product {\nid = #%d\nname = %s\nprice = $%,f\nstock = %d\n}\n", counter++, product.getId(), product
+                    .getName(), product.getPrice(), product.getStock());
         }
     }
 
-    private void removeProduct(){
+    private void removeProduct() {
         int productId = ConsoleReader.readPositiveInt("Enter ID product : ");
         try {
             productService.removeProduct(productId);
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException | InvalidProductIDException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    private  void addProductToCart(){
+    private void addProductToCart() {
         int productId = ConsoleReader.readInt("Enter ID product: ");
         int quantity = ConsoleReader.readInt("Enter quantity product: ");
         try {
             cartService.addProductToCart(productId, quantity);
-        } catch (InsufficientStockException e){
+        } catch (InsufficientStockException | InvalidQuantityException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void removeProductFromCart() {
+        int productId = ConsoleReader.readInt("Enter ID product: ");
+        try {
+
+            cartService.removeProductFromCart(productId);
+        } catch (InvalidProductIDException | ProductNotInCart e) {
             System.out.println(e.getMessage());
         }
     }
