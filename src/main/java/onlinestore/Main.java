@@ -11,7 +11,6 @@ import onlinestore.model.Product;
 import onlinestore.service.CartService;
 import onlinestore.service.ProductService;
 import onlinestore.util.ConsoleReader;
-import org.w3c.dom.ls.LSOutput;
 
 import java.util.List;
 import java.util.Scanner;
@@ -96,6 +95,10 @@ public class Main {
             }
             case 7 ->{
                 showCart();
+                return true;
+            }
+            case 8 ->{
+                clearCart();
                 return true;
             }
 
@@ -192,4 +195,10 @@ public class Main {
         System.out.println("Total price: " + showCart.getTotalPrice());
         System.out.println("===========================");
     }
+
+    private void clearCart(){
+        cartService.clearCart();
+    }
+
+
 }
