@@ -65,26 +65,11 @@ public class Main {
                 showProducts();
                 return true;
             }
-            case 3 -> {
+            case 3 ->{
+                removeProduct();
+                return true;
             }
-            case 4 -> {
-            }
-            case 5 -> {
-            }
-            case 6 -> {
-            }
-            case 7 -> {
-            }
-            case 8 -> {
-            }
-            case 9 -> {
-            }
-            case 10 -> {
-            }
-            case 11 -> {
-            }
-            case 12 -> {
-            }
+
             case 0 -> {
                 System.out.println("Exiting.....");
                 return false;
@@ -108,7 +93,7 @@ public class Main {
         try {
             Product product = new Product(name, price, stock);
             productService.addProduct(product);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -118,6 +103,16 @@ public class Main {
         for (Product product : productService.getAllProducts()) {
             System.out.printf("%d- Product {\nid = #%d\nname = %s\nprice = $%,f\nstock = %d\n}\n",counter++,product.getId(),product
                     .getName(),product.getPrice() , product.getStock());
+        }
+    }
+
+    private void removeProduct(){
+        System.out.println("Enter ID product [1-2-...] : ");
+        int productId = InputUtils.readInt(scanner);
+        try {
+            productService.removeProduct(productId);
+        } catch (IllegalArgumentException e){
+            System.out.println(e.getMessage());
         }
     }
 }
