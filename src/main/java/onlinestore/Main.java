@@ -8,18 +8,26 @@ import onlinestore.util.InputUtils;
 import java.util.Scanner;
 
 public class Main {
-    private static ProductService productService;
+    private final ProductService productService;
+    private final Scanner scanner;
 
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+    private Main() {
+        this.scanner = new Scanner(System.in);
         productService = new ProductService();
-        while (true) {
-            displayMenu();
-            handleChoice(sc);
-        }
-
     }
 
+    public static void main(String[] args) {
+        Main main = new Main();
+        main.run();
+    }
+
+    private void run() {
+        boolean isRun = true;
+        while (isRun) {
+            displayMenu();
+            isRun = handleChoice();
+        }
+    }
 
     private static void displayMenu() {
         System.out.println("===================");
@@ -45,13 +53,17 @@ public class Main {
                 """);
     }
 
-    private static void handleChoice(Scanner sc) {
+    private boolean handleChoice() {
         System.out.println("Choice: ");
-        int choice = InputUtils.readInt(sc);
+        int choice = InputUtils.readInt(scanner);
         switch (choice) {
             case 1 -> {
+                addProduct();
+                return true;
             }
             case 2 -> {
+                showProducts();
+                return true;
             }
             case 3 -> {
             }
@@ -74,26 +86,38 @@ public class Main {
             case 12 -> {
             }
             case 0 -> {
+                System.out.println("Exiting.....");
+                return false;
             }
+
             default -> {
                 System.out.println("Please enter the valid number");
+                return true;
             }
         }
 
     }
 
-    public static void addProduct(Scanner sc) {
+    private void addProduct() {
         System.out.print("Enter name of product: ");
-        String name = sc.nextLine();
-        System.out.print("Enter price");
-        double price = InputUtils.readDouble(sc);
-        System.out.print("Enter stock");
-        int stock = InputUtils.readInt(sc);
+        String name = scanner.nextLine();
+        System.out.print("Enter price: ");
+        double price = InputUtils.readDouble(scanner);
+        System.out.print("Enter stock: ");
+        int stock = InputUtils.readInt(scanner);
         try {
             Product product = new Product(name, price, stock);
             productService.addProduct(product);
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    private void showProducts(){
+        int counter = 1;
+        for (Product product : productService.getAllProducts()) {
+            System.out.printf("%d- Product {\nid = #%d\nname = %s\nprice = $%,f\nstock = %d\n}\n",counter++,product.getId(),product
+                    .getName(),product.getPrice() , product.getStock());
         }
     }
 }
