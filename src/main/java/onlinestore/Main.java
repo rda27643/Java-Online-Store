@@ -107,6 +107,10 @@ public class Main {
                 findOrder();
                 return true;
             }
+            case 11 ->{
+                showAllOrders();
+                return true;
+            }
 
             case 0 -> {
                 System.out.println("Exiting.....");
@@ -223,20 +227,32 @@ public class Main {
         int orderId = ConsoleReader.readInt("Enter order ID: ");
         try {
             Order order = orderService.getOrderById(orderId);
-            System.out.println("=====================");
-            System.out.println("\t\tOrder");
-            System.out.println("=====================");
-            System.out.println("Order ID: " + order.getId() + "\nStatus: " + order.getStatus());
-            System.out.println("Product\t\tPrice\t\tQuantity\ttotal");
-            for (OrderItem item : order.getItems()) {
-                System.out.printf("%s\t\t%,.2f\t\t%d\t\t%,.2f", item.getProduct().getName(), item.getPrice() , item.getQuantity() , item.getTotalPrice());
-            }
-            System.out.println("-----------------------------------");
-            System.out.println("Total: " + order.getTotalPrice());
+            showOrder(order);
 
         } catch (OrderNotFoundException e) {
             System.out.println(e.getMessage());
         }
+    }
+    private void showAllOrders(){
+        if (orderService.getAllOrders().isEmpty()){
+            System.out.println("No orders found");
+        }
+        for (Order order : orderService.getAllOrders()) {
+            showOrder(order);
+        }
+    }
+
+    private void showOrder(Order order) {
+        System.out.println("=====================");
+        System.out.println("\t\tOrder");
+        System.out.println("=====================");
+        System.out.println("Order ID: " + order.getId() + "\nStatus: " + order.getStatus());
+        System.out.println("Product\t\tPrice\t\tQuantity\ttotal");
+        for (OrderItem item : order.getItems()) {
+            System.out.printf("%s\t\t%,.2f\t\t%d\t\t%,.2f", item.getProduct().getName(), item.getPrice() , item.getQuantity() , item.getTotalPrice());
+        }
+        System.out.println("-----------------------------------");
+        System.out.println("Total: " + order.getTotalPrice());
     }
 
 
