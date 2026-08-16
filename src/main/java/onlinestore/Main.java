@@ -3,7 +3,7 @@ package onlinestore;
 
 import onlinestore.model.Product;
 import onlinestore.service.ProductService;
-import onlinestore.util.InputUtils;
+import onlinestore.util.ConsoleReader;
 
 import java.util.Scanner;
 
@@ -54,8 +54,7 @@ public class Main {
     }
 
     private boolean handleChoice() {
-        System.out.println("Choice: ");
-        int choice = InputUtils.readInt(scanner);
+        int choice = ConsoleReader.readInt("Choice: ");
         switch (choice) {
             case 1 -> {
                 addProduct();
@@ -84,12 +83,9 @@ public class Main {
     }
 
     private void addProduct() {
-        System.out.print("Enter name of product: ");
-        String name = scanner.nextLine();
-        System.out.print("Enter price: ");
-        double price = InputUtils.readDouble(scanner);
-        System.out.print("Enter stock: ");
-        int stock = InputUtils.readInt(scanner);
+        String name = ConsoleReader.readString("Enter name of product: ");
+        double price = ConsoleReader.readPositiveDouble("Enter price: ");
+        int stock = ConsoleReader.readPositiveInt("Enter stock: ");
         try {
             Product product = new Product(name, price, stock);
             productService.addProduct(product);
@@ -107,8 +103,7 @@ public class Main {
     }
 
     private void removeProduct(){
-        System.out.println("Enter ID product [1-2-...] : ");
-        int productId = InputUtils.readInt(scanner);
+        int productId = ConsoleReader.readPositiveInt("Enter ID product : ");
         try {
             productService.removeProduct(productId);
         } catch (IllegalArgumentException e){
