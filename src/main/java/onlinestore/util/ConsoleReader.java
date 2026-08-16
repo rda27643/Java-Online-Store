@@ -9,7 +9,7 @@ public class ConsoleReader {
     }
     public static int readInt(String message){
         while(true){
-            System.out.println(message);
+            System.out.print(message);
             String input = SCANNER.nextLine().trim();
             try {
                 return Integer.parseInt(input);
@@ -31,7 +31,7 @@ public class ConsoleReader {
 
     public static double readDouble(String message) {
         while (true) {
-            System.out.println(message);
+            System.out.print(message);
             String input = SCANNER.nextLine().trim();
             try {
                 return Double.parseDouble(input);
@@ -52,7 +52,7 @@ public class ConsoleReader {
 
     public static String readString(String message) {
         while (true) {
-            System.out.println(message);
+            System.out.print(message);
             String input = SCANNER.nextLine().trim();
             if (!input.isEmpty()) {
                 return input;
