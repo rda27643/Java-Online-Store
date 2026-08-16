@@ -6,10 +6,12 @@ import onlinestore.exception.InvalidProductIDException;
 import onlinestore.exception.InvalidQuantityException;
 import onlinestore.exception.ProductNotInCart;
 import onlinestore.model.Cart;
+import onlinestore.model.CartItem;
 import onlinestore.model.Product;
 import onlinestore.service.CartService;
 import onlinestore.service.ProductService;
 import onlinestore.util.ConsoleReader;
+import org.w3c.dom.ls.LSOutput;
 
 import java.util.List;
 import java.util.Scanner;
@@ -92,6 +94,10 @@ public class Main {
                 updateCartQuantity();
                 return true;
             }
+            case 7 ->{
+                showCart();
+                return true;
+            }
 
             case 0 -> {
                 System.out.println("Exiting.....");
@@ -125,7 +131,7 @@ public class Main {
             System.out.println("Not products found");
         }
         for (Product product : productService.getAllProducts()) {
-            System.out.printf("%d- Product {\nid = #%d\nname = %s\nprice = $%,f\nstock = %d\n}\n", counter++, product.getId(), product
+            System.out.printf("%d- Product {\nid = #%d\nname = %s\nprice = $%,.2f\nstock = %d\n}\n", counter++, product.getId(), product
                     .getName(), product.getPrice(), product.getStock());
         }
     }
@@ -167,5 +173,23 @@ public class Main {
         } catch (InvalidProductIDException | InvalidQuantityException | InsufficientStockException e){
             System.out.println(e.getMessage());
         }
+    }
+
+    private void showCart(){
+        Cart showCart = cartService.getCart();
+        System.out.println("===========================");
+        System.out.println("\t\tCart");
+        System.out.println("===========================");
+        System.out.println("ID\t\tProduct\t\tPrice\t\tQuantity\tTotal");
+        System.out.println("-----------------------------------------------------");
+        for (CartItem item : showCart.getItems()) {
+            System.out.printf("%d\t\t%s\t\t$%,.2f\t\t%d\t\t\t%,.2f",item.getProduct().getId(),item.getProduct().getName(), item.getProduct().getPrice()
+            ,item.getQuantity(),item.getTotalPrice());
+            System.out.println();
+        }
+        System.out.println("-----------------------------------------------------");
+        System.out.println("Total items: " + showCart.getItemCount());
+        System.out.println("Total price: " + showCart.getTotalPrice());
+        System.out.println("===========================");
     }
 }
