@@ -84,6 +84,14 @@ public class Main {
                 addProductToCart();
                 return true;
             }
+            case 5 -> {
+                removeProductFromCart();
+                return true;
+            }
+            case 6 -> {
+                updateCartQuantity();
+                return true;
+            }
 
             case 0 -> {
                 System.out.println("Exiting.....");
@@ -147,6 +155,16 @@ public class Main {
 
             cartService.removeProductFromCart(productId);
         } catch (InvalidProductIDException | ProductNotInCart e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void updateCartQuantity(){
+        int productId = ConsoleReader.readInt("Enter ID product: ");
+        int quantity = ConsoleReader.readInt("Enter new quantity product: ");
+        try {
+            cartService.updateQuantity(productId,quantity);
+        } catch (InvalidProductIDException | InvalidQuantityException | InsufficientStockException e){
             System.out.println(e.getMessage());
         }
     }
