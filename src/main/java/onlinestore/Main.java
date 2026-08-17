@@ -1,25 +1,33 @@
 package onlinestore;
 
 
-import onlinestore.exception.*;
-import onlinestore.model.*;
+import onlinestore.exception.EmptyCartException;
+import onlinestore.exception.InsufficientStockException;
+import onlinestore.exception.InvalidAmountStockException;
+import onlinestore.exception.InvalidProductIDException;
+import onlinestore.exception.InvalidQuantityException;
+import onlinestore.exception.OrderNotFoundException;
+import onlinestore.exception.ProductNotInCart;
+import onlinestore.model.Cart;
+import onlinestore.model.CartItem;
+import onlinestore.model.Order;
+import onlinestore.model.OrderItem;
+import onlinestore.model.OrderStatus;
+import onlinestore.model.Product;
 import onlinestore.service.CartService;
 import onlinestore.service.OrderService;
 import onlinestore.service.ProductService;
 import onlinestore.util.ConsoleReader;
 
 import java.util.List;
-import java.util.Scanner;
 
 public class Main {
     private final ProductService productService;
     private final Cart cart;
     private final CartService cartService;
-    private final Scanner scanner;
     private final OrderService orderService;
 
     private Main() {
-        this.scanner = new Scanner(System.in);
         productService = new ProductService();
         cart = new Cart();
         cartService = new CartService(cart, productService);
@@ -109,6 +117,10 @@ public class Main {
             }
             case 11 ->{
                 showAllOrders();
+                return true;
+            }
+            case 12 -> {
+                changeOrderStatus();
                 return true;
             }
 
@@ -253,6 +265,43 @@ public class Main {
         }
         System.out.println("-----------------------------------");
         System.out.println("Total: " + order.getTotalPrice());
+    }
+
+    private void changeOrderStatus(){
+        int orderId = ConsoleReader.readInt("Enter Order ID: ");
+        Order order;
+        int choice;
+        try {
+            order = orderService.getOrderById(orderId);
+        } catch (OrderNotFoundException e){
+            System.out.println(e.getMessage());
+            return;
+        }
+        switch (order.getStatus()){
+            case PENDING ->{
+                System.out.println("Available statues:");
+                System.out.println("1- CONFIRMED");
+                System.out.println("2- CANCELLED");
+                choice = ConsoleReader.readPositiveInt("Choice: ");
+                if (choice == 1){
+                    orderService.changeOrderStatus(orderId, OrderStatus.CONFIRMED);
+                } else
+                    orderService.changeOrderStatus(orderId, OrderStatus.CANCELLED);
+            }
+            case CONFIRMED -> {
+                System.out.println("Available statues:");
+                System.out.println("1- COMPLETED");
+                System.out.println("2- CANCELLED");
+                choice = ConsoleReader.readPositiveInt("Choice: ");
+                if (choice == 1){
+                    orderService.changeOrderStatus(orderId, OrderStatus.COMPLETED);
+                } else
+                    orderService.changeOrderStatus(orderId, OrderStatus.CANCELLED);
+            }
+            case CANCELLED,COMPLETED -> {
+                System.out.println("This order can no longer be changed");
+            }
+        }
     }
 
 
