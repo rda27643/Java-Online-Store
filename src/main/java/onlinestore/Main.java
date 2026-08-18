@@ -1,13 +1,7 @@
 package onlinestore;
 
 
-import onlinestore.exception.EmptyCartException;
-import onlinestore.exception.InsufficientStockException;
-import onlinestore.exception.InvalidAmountStockException;
-import onlinestore.exception.InvalidProductIDException;
-import onlinestore.exception.InvalidQuantityException;
-import onlinestore.exception.OrderNotFoundException;
-import onlinestore.exception.ProductNotInCart;
+import onlinestore.exception.*;
 import onlinestore.model.Cart;
 import onlinestore.model.CartItem;
 import onlinestore.model.Order;
@@ -23,13 +17,12 @@ import java.util.List;
 
 public class Main {
     private final ProductService productService;
-    private final Cart cart;
     private final CartService cartService;
     private final OrderService orderService;
 
     private Main() {
         productService = new ProductService();
-        cart = new Cart();
+        Cart cart = new Cart();
         cartService = new CartService(cart, productService);
         orderService = new OrderService(cart, productService);
     }
@@ -115,7 +108,7 @@ public class Main {
                 findOrder();
                 return true;
             }
-            case 11 ->{
+            case 11 -> {
                 showAllOrders();
                 return true;
             }
@@ -141,7 +134,7 @@ public class Main {
     private void addProduct() {
         String name = ConsoleReader.readString("Enter name of product: ");
         double price = ConsoleReader.readPositiveDouble("Enter price: ");
-        int stock = ConsoleReader.readPositiveInt("Enter stock: ");
+        int stock = ConsoleReader.readInt("Enter stock: ");
         try {
             Product product = new Product(name, price, stock);
             productService.addProduct(product);
@@ -152,20 +145,25 @@ public class Main {
 
     private void showProducts() {
         int counter = 1;
-        List<Product> products = productService.getAllProducts();
-        if (products.isEmpty()) {
-            System.out.println("Not products found");
-        }
-        for (Product product : productService.getAllProducts()) {
-            System.out.printf("%d- Product {\nid = #%d\nname = %s\nprice = $%,.2f\nstock = %d\n}\n", counter++, product.getId(), product
-                    .getName(), product.getPrice(), product.getStock());
+        try {
+            for (Product product : productService.getAllProducts()) {
+                System.out.printf("%d- Product {\nid = #%d\nname = %s\nprice = $%,.2f\nstock = %d\n}\n", counter++, product.getId(), product
+                        .getName(), product.getPrice(), product.getStock());
+            }
+        } catch (ProductNotFoundException e) {
+            System.out.println(e.getMessage());
         }
     }
 
     private void removeProduct() {
         int productId = ConsoleReader.readPositiveInt("Enter ID product : ");
         try {
+            if (cartService.isInCart(productId)) {
+                System.out.println("Can not remove product is in cart");
+                return;
+            }
             productService.removeProduct(productId);
+            System.out.println("Product removed");
         } catch (IllegalArgumentException | InvalidProductIDException e) {
             System.out.println(e.getMessage());
         }
@@ -176,7 +174,8 @@ public class Main {
         int quantity = ConsoleReader.readInt("Enter quantity product: ");
         try {
             cartService.addProductToCart(productId, quantity);
-        } catch (InsufficientStockException | InvalidQuantityException e) {
+            System.out.println("Product added successfully");
+        } catch (InsufficientStockException | InvalidQuantityException | ProductNotFoundException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -184,7 +183,6 @@ public class Main {
     private void removeProductFromCart() {
         int productId = ConsoleReader.readInt("Enter ID product: ");
         try {
-
             cartService.removeProductFromCart(productId);
         } catch (InvalidProductIDException | ProductNotInCart e) {
             System.out.println(e.getMessage());
@@ -196,13 +194,18 @@ public class Main {
         int quantity = ConsoleReader.readInt("Enter new quantity product: ");
         try {
             cartService.updateQuantity(productId, quantity);
+            System.out.println("Quantity is update");
         } catch (InvalidProductIDException | InvalidQuantityException | InsufficientStockException e) {
             System.out.println(e.getMessage());
         }
     }
 
     private void showCart() {
-        Cart showCart = cartService.getCart();
+        Cart showCart = cartService.getCartView();
+        if (showCart.isEmpty()) {
+            System.out.println("Cart is empty");
+            return;
+        }
         System.out.println("===========================");
         System.out.println("\t\tCart");
         System.out.println("===========================");
@@ -221,6 +224,7 @@ public class Main {
 
     private void clearCart() {
         cartService.clearCart();
+        System.out.println("Cart cleared successfully");
     }
 
     private void createOrder() {
@@ -245,12 +249,14 @@ public class Main {
             System.out.println(e.getMessage());
         }
     }
-    private void showAllOrders(){
-        if (orderService.getAllOrders().isEmpty()){
-            System.out.println("No orders found");
-        }
-        for (Order order : orderService.getAllOrders()) {
-            showOrder(order);
+
+    private void showAllOrders() {
+        try {
+            for (Order order : orderService.getAllOrders()) {
+                showOrder(order);
+            }
+        } catch (OrderNotFoundException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -261,46 +267,50 @@ public class Main {
         System.out.println("Order ID: " + order.getId() + "\nStatus: " + order.getStatus());
         System.out.println("Product\t\tPrice\t\tQuantity\ttotal");
         for (OrderItem item : order.getItems()) {
-            System.out.printf("%s\t\t%,.2f\t\t%d\t\t%,.2f", item.getProduct().getName(), item.getPrice() , item.getQuantity() , item.getTotalPrice());
+            System.out.printf("%s\t\t%,.2f\t\t%d\t\t%,.2f", item.getProduct().getName(), item.getPrice(), item.getQuantity(), item.getTotalPrice());
         }
         System.out.println("-----------------------------------");
-        System.out.println("Total: " + order.getTotalPrice());
+        System.out.printf("Total: %,.2f", order.getTotalPrice());
     }
 
-    private void changeOrderStatus(){
+    private void changeOrderStatus() {
         int orderId = ConsoleReader.readInt("Enter Order ID: ");
         Order order;
         int choice;
         try {
             order = orderService.getOrderById(orderId);
-        } catch (OrderNotFoundException e){
+        } catch (OrderNotFoundException e) {
             System.out.println(e.getMessage());
             return;
         }
-        switch (order.getStatus()){
-            case PENDING ->{
+        switch (order.getStatus()) {
+            case PENDING -> {
                 System.out.println("Available statues:");
                 System.out.println("1- CONFIRMED");
                 System.out.println("2- CANCELLED");
-                choice = ConsoleReader.readPositiveInt("Choice: ");
-                if (choice == 1){
+                choice = ConsoleReader.readIntInRange("Choice: ", 1, 2);
+                if (choice == 1) {
                     orderService.changeOrderStatus(orderId, OrderStatus.CONFIRMED);
-                } else
+                    System.out.printf("Order #%d status changed to CONFIRMED", orderId);
+                } else {
                     orderService.changeOrderStatus(orderId, OrderStatus.CANCELLED);
+                    System.out.printf("Order #%d status changed to CANCELLED", orderId);
+                }
             }
             case CONFIRMED -> {
                 System.out.println("Available statues:");
                 System.out.println("1- COMPLETED");
                 System.out.println("2- CANCELLED");
-                choice = ConsoleReader.readPositiveInt("Choice: ");
-                if (choice == 1){
+                choice = ConsoleReader.readIntInRange("Choice: ", 1, 2);
+                if (choice == 1) {
                     orderService.changeOrderStatus(orderId, OrderStatus.COMPLETED);
-                } else
+                    System.out.printf("Order #%d status changed to COMPLETED", orderId);
+                } else {
                     orderService.changeOrderStatus(orderId, OrderStatus.CANCELLED);
+                    System.out.printf("Order #%d status changed to CANCELLED", orderId);
+                }
             }
-            case CANCELLED,COMPLETED -> {
-                System.out.println("This order can no longer be changed");
-            }
+            case CANCELLED, COMPLETED -> System.out.println("This order can no longer be changed");
         }
     }
 

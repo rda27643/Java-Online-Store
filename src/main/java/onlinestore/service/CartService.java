@@ -65,7 +65,7 @@ public class CartService {
         throw new ProductNotInCart("Product not in cart");
     }
 
-    public Cart getCart() {
+    public Cart getCartView() {
         List<CartItem> items = cart.getItems();
         Cart cart_copy = new Cart();
         for (CartItem item : items) {
@@ -76,5 +76,13 @@ public class CartService {
 
     public void clearCart() {
         this.cart.clear();
+    }
+    public boolean isInCart(int productId){
+        for (CartItem item : cart.getItems()) {
+            if (item.getProduct().getId() == productId){
+                return true;
+            }
+        }
+        return false;
     }
 }

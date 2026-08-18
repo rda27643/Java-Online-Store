@@ -7,7 +7,7 @@ public class CartItem {
     private int quantity;
 
     public CartItem(Product product, int quantity) {
-        if (product == null){
+        if (product == null) {
             throw new IllegalArgumentException("Product can not be null");
         }
         validateQuantity(quantity);
@@ -23,8 +23,8 @@ public class CartItem {
     public void increaseQuantity(int increase) {
         if (increase <= 0) {
             throw new InvalidQuantityException("Must be positive");
-        } else
-            this.quantity += increase;
+        }
+        this.quantity += increase;
     }
 
     public Product getProduct() {
@@ -39,9 +39,9 @@ public class CartItem {
         return product.getPrice() * this.quantity;
     }
 
-    public void validateQuantity(int quantity){
+    private void validateQuantity(int quantity) {
         if (quantity <= 0) {
-            throw new InvalidQuantityException("Quantity must greater than 0");
+            throw new InvalidQuantityException("Quantity must be greater than 0");
         }
     }
 

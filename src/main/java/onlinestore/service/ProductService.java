@@ -6,16 +6,13 @@ import onlinestore.exception.ProductNotFoundException;
 import onlinestore.model.Product;
 import onlinestore.util.ValidationUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ProductService {
     private final Map<Integer, Product> products;
 
     public ProductService() {
-        this.products = new HashMap<>();
+        this.products = new LinkedHashMap<>();
     }
 
     public void addProduct(Product product) {
@@ -44,6 +41,9 @@ public class ProductService {
     }
 
     public List<Product> getAllProducts() {
+        if (products.isEmpty()){
+            throw new ProductNotFoundException("Product not found");
+        }
         return new ArrayList<>(products.values());
     }
 
