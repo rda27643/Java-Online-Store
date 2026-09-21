@@ -7,13 +7,14 @@ public class ConsoleReader {
 
     private ConsoleReader() {
     }
-    public static int readInt(String message){
-        while(true){
+
+    public static int readInt(String message) {
+        while (true) {
             System.out.print(message);
             String input = SCANNER.nextLine().trim();
             try {
                 return Integer.parseInt(input);
-            } catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 System.out.println("Enter a valid Integer");
             }
         }
@@ -22,7 +23,7 @@ public class ConsoleReader {
     public static int readPositiveInt(String message) {
         while (true) {
             int input = readInt(message);
-            if (input > 0){
+            if (input > 0) {
                 return input;
             }
             System.out.println("Input must be greater than 0");
@@ -40,10 +41,11 @@ public class ConsoleReader {
             }
         }
     }
-    public static double readPositiveDouble(String message){
-        while (true){
+
+    public static double readPositiveDouble(String message) {
+        while (true) {
             double input = readDouble(message);
-            if (input > 0){
+            if (input > 0) {
                 return input;
             }
             System.out.println("Number mus be grater than 0");
@@ -59,6 +61,16 @@ public class ConsoleReader {
             }
             System.out.println("Input can not be empty");
 
+        }
+    }
+
+    public static int readIntInRange(String message, int start, int end) {
+        while (true) {
+            int input = readInt(message);
+            if (input >= start && input <= end) {
+                return input;
+            }
+            System.out.println("Input not in range");
         }
     }
 

@@ -36,11 +36,11 @@ public class OrderItem {
 
     public void validateQuantity(int quantity){
         if (quantity <= 0) {
-            throw new InvalidQuantityException("Quantity must greater than 0");
+            throw new InvalidQuantityException("Quantity must be greater than 0");
         }
     }
 
-    public void validatePrice(double price){
+    private void validatePrice(double price){
         if (price <= 0){
             throw new IllegalArgumentException("Invalid price");
         }

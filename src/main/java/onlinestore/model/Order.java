@@ -7,22 +7,15 @@ public class Order {
     private final int id;
     private OrderStatus status;
     private final List<OrderItem> items;
-    private static int nextID = 1000;
+    private static int nextId = 1000;
 
     public Order(List<OrderItem> items) {
-        if (items == null || items.isEmpty()){
+        if (items == null || items.isEmpty()) {
             throw new IllegalArgumentException("Order must contain at least one item");
         }
-        this.id = nextID++;
         this.items = new ArrayList<>(items);
         status = OrderStatus.PENDING;
-    }
-
-    public void setStatus(OrderStatus status) {
-        if (status == null){
-            throw new IllegalArgumentException("Order status can not be null");
-        }
-        this.status = status;
+        this.id = nextId++;
     }
 
     public int getId() {
@@ -43,5 +36,11 @@ public class Order {
             sum += item.getTotalPrice();
         }
         return sum;
+    }
+
+    public void setStatus(OrderStatus status) {
+        if (status != null) {
+            this.status = status;
+        }
     }
 }

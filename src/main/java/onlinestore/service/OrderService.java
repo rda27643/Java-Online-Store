@@ -67,6 +67,9 @@ public class OrderService {
     }
 
     public List<Order> getAllOrders() {
+        if (orders.isEmpty()){
+            throw new OrderNotFoundException("Order not found");
+        }
         return new ArrayList<>(orders.values());
     }
 
