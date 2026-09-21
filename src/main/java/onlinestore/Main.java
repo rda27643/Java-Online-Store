@@ -13,7 +13,6 @@ import onlinestore.service.OrderService;
 import onlinestore.service.ProductService;
 import onlinestore.util.ConsoleReader;
 
-import java.util.List;
 
 public class Main {
     private final ProductService productService;
